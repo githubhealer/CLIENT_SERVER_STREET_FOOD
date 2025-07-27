@@ -121,12 +121,48 @@
                         <p>Loading deals...</p>
                     </div>
                     
-                    <div id="noDealsMessage" class="no-deals" style="display: none;">
-                        <p>No deals found matching your criteria.</p>
+                <div id="noDealsMessage" class="no-deals" style="display: none;">
+                    <p>No deals found matching your criteria.</p>
+                </div>
+                
+                <!-- Join Deal Modal (Hidden by default) -->
+                <div id="joinDealModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Join Deal: <span id="modalDealTitle">Deal Name</span></h3>
+                            <button class="modal-close" type="button">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="joinDealInfo" class="deal-info">
+                                <h4 id="dealInfoTitle">Deal Details</h4>
+                                <p>You are about to join this deal. Please select your vendor account and specify the quantity you want to order.</p>
+                            </div>
+                            <form id="joinDealForm">
+                                <input type="hidden" id="modalDealId" name="deal_id">
+                                <div class="form-group">
+                                    <label for="vendorSelect">Select Vendor:</label>
+                                    <select id="vendorSelect" name="vendor_id" required>
+                                        <option value="">Choose Vendor</option>
+                                        <option value="vendor_01">Raju's Chaat Corner (Jayanagar)</option>
+                                        <option value="vendor_02">Sita's Dosa Stall (Jayanagar)</option>
+                                        <option value="vendor_03">Anil's Pav Bhaji (Indiranagar)</option>
+                                        <option value="vendor_04">Priya's Pani Puri (Koramangala)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="joinQuantity">Quantity:</label>
+                                    <input type="number" id="joinQuantity" name="quantity" min="1" placeholder="Enter quantity" required>
+                                    <small class="form-help">Minimum quantity: <span id="minQuantityValue">1</span></small>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" id="submitJoinBtn" class="btn btn-primary">Join Deal</button>
+                                    <button type="button" id="cancelJoinBtn" class="btn btn-secondary">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-
-                <div class="status">
+            </div>                <div class="status">
                     <p><strong>Status:</strong> View Deals API is ready! ✅</p>
                     <p><strong>Next Step:</strong> Frontend for viewing deals is now available.</p>
                 </div>

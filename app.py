@@ -173,6 +173,133 @@ def get_deals():
             'error': f'Server error: {str(e)}'
         }), 500
 
+@app.route('/api/deals/<deal_id>/join', methods=['POST'])
+def join_deal(deal_id):
+    """Join a deal (for vendors)"""
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['vendorId', 'quantity']
+        for field in required_fields:
+            if field not in data or data[field] is None:
+                return jsonify({
+                    'success': False,
+                    'error': f'Missing required field: {field}'
+                }), 400
+        
+        # Validate vendor exists
+        vendor = db.get_user_by_id(data['vendorId'])
+        if not vendor:
+            return jsonify({
+                'success': False,
+                'error': 'Vendor not found'
+            }), 404
+        
+        if vendor.get('role') != 'vendor':
+            return jsonify({
+                'success': False,
+                'error': 'User is not a vendor'
+            }), 403
+        
+        # Validate deal exists and is active
+        deal = db.get_deal_by_id(deal_id)
+        if not deal:
+            return jsonify({
+                'success': False,
+                'error': 'Deal not found'
+            }), 404
+        
+        if deal.get('status') != 'active':
+            return jsonify({
+                'success': False,
+                'error': f'Deal is {deal.get("status", "inactive")} and cannot be joined'
+            }), 400
+        
+        # Validate quantity
+        try:
+            quantity = int(data['quantity'])
+            if quantity <= 0:
+                raise ValueError("Quantity must be positive")
+        except (ValueError, TypeError):
+            return jsonify({
+                'success': False,
+                'error': 'Invalid quantity'
+            }), 400
+        
+        # Check if quantity is available
+        remaining = deal['target_quantity'] - deal['current_quantity']
+        if quantity > remaining:
+            return jsonify({
+                'success': False,
+                'error': f'Not enough quantity available. Only {remaining} {deal["unit"]} remaining'
+            }), 400
+        
+        # Generate unique order ID
+        order_id = f"order_{str(uuid.uuid4())[:8]}"
+        
+        # Create order object
+        new_order = {
+            'orderId': order_id,
+            'dealId': deal_id,
+            'vendorId': data['vendorId'],
+            'quantity': quantity,
+            'created_at': datetime.now().isoformat() + "Z"
+        }
+        
+        # Add order to database
+        order_success = db.add_order(new_order)
+        if not order_success:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to save order to database'
+            }), 500
+        
+        # Update deal's current quantity
+        updated_deal = deal.copy()
+        updated_deal['current_quantity'] += quantity
+        
+        # Check if deal target is reached
+        if updated_deal['current_quantity'] >= updated_deal['target_quantity']:
+            updated_deal['status'] = 'confirmed'
+            updated_deal['confirmed_at'] = datetime.now().isoformat() + "Z"
+        
+        # Update deal in database  
+        deal_success = db.update_deal(deal_id, updated_deal)
+        if not deal_success:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to update deal'
+            }), 500
+        
+        # Prepare response
+        response_data = {
+            'success': True,
+            'message': 'Successfully joined the deal!',
+            'order': new_order,
+            'deal_update': {
+                'current_quantity': updated_deal['current_quantity'],
+                'target_quantity': updated_deal['target_quantity'],
+                'remaining_quantity': updated_deal['target_quantity'] - updated_deal['current_quantity'],
+                'status': updated_deal['status'],
+                'progress_percentage': round((updated_deal['current_quantity'] / updated_deal['target_quantity']) * 100, 1)
+            }
+        }
+        
+        # Add confirmation message if deal is complete
+        if updated_deal['status'] == 'confirmed':
+            response_data['message'] = 'Deal completed! You were part of reaching the target quantity.'
+            response_data['deal_completed'] = True
+        
+        return jsonify(response_data), 201
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Server error: {str(e)}'
+        }), 500
+
 # Load database helper function (legacy - now using database.py)
 def load_database():
     """Load data from database.json file"""

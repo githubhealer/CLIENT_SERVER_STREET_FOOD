@@ -79,6 +79,18 @@ class DatabaseManager:
         data['deals'].append(deal_data)
         return self._save_data(data)
     
+    def update_deal(self, deal_id: str, updated_deal: Dict) -> bool:
+        """Update an existing deal"""
+        data = self._load_data()
+        deals = data.get('deals', [])
+        
+        for i, deal in enumerate(deals):
+            if deal.get('dealId') == deal_id:
+                deals[i] = updated_deal
+                return self._save_data(data)
+        
+        return False  # Deal not found
+    
     # Orders operations
     def get_all_orders(self) -> List[Dict]:
         """Get all orders"""

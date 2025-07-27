@@ -115,7 +115,7 @@ function displayDeals(deals) {
             
             ${deal.remaining_quantity > 0 ? 
                 `<div style="margin-top: 1rem;">
-                    <button class="btn btn-primary" style="width: 100%;" onclick="joinDeal('${deal.dealId}')">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="openJoinModal('${deal.dealId}', '${escapeHtml(deal.item)}', 1)">
                         Join Deal (${deal.remaining_quantity} ${deal.unit} available)
                     </button>
                 </div>` : 
@@ -238,3 +238,134 @@ function hideMessage() {
     const messageArea = document.getElementById('messageArea');
     messageArea.style.display = 'none';
 }
+
+// Modal functionality for joining deals
+function setupModalEvents() {
+    const modal = document.getElementById('joinDealModal');
+    const modalClose = document.querySelector('.modal-close');
+    const cancelBtn = document.getElementById('cancelJoinBtn');
+    const joinForm = document.getElementById('joinDealForm');
+    
+    // Close modal events
+    if (modalClose) {
+        modalClose.addEventListener('click', closeJoinModal);
+    }
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeJoinModal);
+    }
+    
+    // Close modal when clicking outside
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeJoinModal();
+            }
+        });
+    }
+    
+    // Handle join form submission
+    if (joinForm) {
+        joinForm.addEventListener('submit', handleJoinDeal);
+    }
+}
+
+function openJoinModal(dealId, dealTitle, minQuantity = 1) {
+    const modal = document.getElementById('joinDealModal');
+    const dealTitleSpan = document.getElementById('modalDealTitle');
+    const dealIdInput = document.getElementById('modalDealId');
+    const quantityInput = document.getElementById('joinQuantity');
+    const minQuantitySpan = document.getElementById('minQuantityValue');
+    
+    if (dealTitleSpan) dealTitleSpan.textContent = dealTitle;
+    if (dealIdInput) dealIdInput.value = dealId;
+    if (quantityInput) {
+        quantityInput.min = minQuantity;
+        quantityInput.value = minQuantity;
+    }
+    if (minQuantitySpan) minQuantitySpan.textContent = minQuantity;
+    
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+}
+
+function closeJoinModal() {
+    const modal = document.getElementById('joinDealModal');
+    const form = document.getElementById('joinDealForm');
+    
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+    
+    if (form) {
+        form.reset(); // Clear form data
+    }
+    
+    // Clear any error messages
+    clearFormErrors('joinDealForm');
+}
+
+async function handleJoinDeal(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const submitBtn = document.getElementById('submitJoinBtn');
+    const formData = new FormData(form);
+    
+    // Clear previous errors
+    clearFormErrors('joinDealForm');
+    
+    // Show loading state
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Joining...';
+    }
+    
+    try {
+        const response = await fetch(`/api/deals/${formData.get('deal_id')}/join`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                vendorId: formData.get('vendor_id'),
+                quantity: parseInt(formData.get('quantity'))
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Success! Close modal and refresh deals
+            closeJoinModal();
+            loadDeals(); // Refresh the deals list
+            
+            // Show success message
+            showMessage(`Successfully joined deal! Order ID: ${result.order_id}`, 'success');
+        } else {
+            // Handle validation errors
+            if (result.errors) {
+                displayFormErrors('joinDealForm', result.errors);
+            } else {
+                showMessage(result.error || 'Failed to join deal', 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error joining deal:', error);
+        showMessage('Network error. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Join Deal';
+        }
+    }
+}
+
+// Initialize modal events when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setupModalEvents();
+});
