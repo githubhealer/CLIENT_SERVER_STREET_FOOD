@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group-Buying App - Street Food Vendors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🍜 Group-Buying Platform</h1>
+            <p>Empowering Street Food Vendors with Bulk Deals</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="welcome-section">
+                <h2>Welcome to the Group-Buying Platform!</h2>
+                <p>This platform connects suppliers and street food vendors for bulk purchasing deals.</p>
+                
+                <div class="user-types">
+                    <div class="user-type">
+                        <h3>📦 Suppliers</h3>
+                        <p>Create bulk deals for ingredients and supplies</p>
+                        <button class="btn btn-primary" onclick="showCreateDealForm()">Create New Deal</button>
+                    </div>
+                    <div class="user-type">
+                        <h3>🛒 Vendors</h3>
+                        <p>Join deals to get better prices through group buying</p>
+                        <button class="btn btn-secondary" onclick="showDeals()">View Available Deals</button>
+                    </div>
+                </div>
+
+                <!-- Create Deal Form (Hidden by default) -->
+                <div id="createDealForm" class="form-section" style="display: none;">
+                    <h3>Create New Deal</h3>
+                    <form id="dealForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="supplierId">Supplier:</label>
+                                <select id="supplierId" name="supplierId" required>
+                                    <option value="">Select Supplier</option>
+                                    <option value="supplier_01">Reliable Veggies (Jayanagar)</option>
+                                    <option value="supplier_02">City Grains Inc. (Koramangala)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="location">Location:</label>
+                                <input type="text" id="location" name="location" placeholder="e.g., Jayanagar, Bangalore" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="item">Item Name:</label>
+                                <input type="text" id="item" name="item" placeholder="e.g., Fresh Tomatoes" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="unit">Unit:</label>
+                                <select id="unit" name="unit" required>
+                                    <option value="">Select Unit</option>
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="Liter">Liter</option>
+                                    <option value="pieces">Pieces</option>
+                                    <option value="boxes">Boxes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="price">Price per Unit (₹):</label>
+                                <input type="number" id="price" name="price" min="0" step="0.01" placeholder="25.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="target_quantity">Target Quantity:</label>
+                                <input type="number" id="target_quantity" name="target_quantity" min="1" placeholder="100" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description (Optional):</label>
+                            <textarea id="description" name="description" rows="3" placeholder="Additional details about the item..."></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Create Deal</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideCreateDealForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Success/Error Messages -->
+                <div id="messageArea" class="message-area" style="display: none;">
+                    <div id="messageContent"></div>
+                </div>
+
+                <!-- Deals Display Section (Hidden by default) -->
+                <div id="dealsSection" class="deals-section" style="display: none;">
+                    <div class="deals-header">
+                        <h3>Available Deals</h3>
+                        <div class="deals-filters">
+                            <select id="locationFilter" onchange="filterDeals()">
+                                <option value="">All Locations</option>
+                                <option value="jayanagar">Jayanagar</option>
+                                <option value="koramangala">Koramangala</option>
+                                <option value="indiranagar">Indiranagar</option>
+                            </select>
+                            <button class="btn btn-secondary btn-small" onclick="refreshDeals()">🔄 Refresh</button>
+                            <button class="btn btn-secondary btn-small" onclick="hideDeals()">✕ Close</button>
+                        </div>
+                    </div>
+                    
+                    <div id="dealsContainer" class="deals-container">
+                        <!-- Deals will be loaded here dynamically -->
+                    </div>
+                    
+                    <div id="dealsLoading" class="loading" style="display: none;">
+                        <p>Loading deals...</p>
+                    </div>
+                    
+                    <div id="noDealsMessage" class="no-deals" style="display: none;">
+                        <p>No deals found matching your criteria.</p>
+                    </div>
+                </div>
+
+                <div class="status">
+                    <p><strong>Status:</strong> View Deals API is ready! ✅</p>
+                    <p><strong>Next Step:</strong> Frontend for viewing deals is now available.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Group-Buying Platform - Hackathon Project</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
