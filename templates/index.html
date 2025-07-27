@@ -100,7 +100,7 @@
                 <!-- Deals Display Section (Hidden by default) -->
                 <div id="dealsSection" class="deals-section" style="display: none;">
                     <div class="deals-header">
-                        <h3>Available Deals</h3>
+                        <h3>📦 Available Deals</h3>
                         <div class="deals-filters">
                             <select id="locationFilter" onchange="filterDeals()">
                                 <option value="">All Locations</option>
@@ -111,6 +111,17 @@
                             <button class="btn btn-secondary btn-small" onclick="refreshDeals()">🔄 Refresh</button>
                             <button class="btn btn-secondary btn-small" onclick="hideDeals()">✕ Close</button>
                         </div>
+                    </div>
+                    
+                    <!-- Auto-refresh Controls -->
+                    <div class="auto-refresh-controls">
+                        <div class="refresh-toggle">
+                            <input type="checkbox" id="autoRefreshToggle" checked onchange="toggleAutoRefresh()">
+                            <label for="autoRefreshToggle">🔄 Auto-refresh every 30s</label>
+                        </div>
+                        <span class="refresh-info" style="font-size: 0.8rem; color: #666;">
+                            Last updated: <span id="lastUpdateTime">Just now</span>
+                        </span>
                     </div>
                     
                     <div id="dealsContainer" class="deals-container">
