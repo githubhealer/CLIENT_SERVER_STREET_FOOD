@@ -601,7 +601,8 @@ async function handleJoinDeal(event) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                vendorId: formData.get('vendor_id'),
+                vendorName: formData.get('vendor_name'),
+                vendorLocation: formData.get('vendor_location'),
                 quantity: parseInt(formData.get('quantity'))
             })
         });

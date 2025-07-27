@@ -93,6 +93,42 @@ class DatabaseManager:
         else:
             return self.add_supplier(supplier_name, location)
     
+    def add_vendor(self, vendor_name: str, location: str) -> str:
+        """Add a new vendor and return the vendor ID"""
+        import uuid
+        
+        # Generate unique vendor ID
+        vendor_id = f"vendor_{str(uuid.uuid4())[:8]}"
+        
+        # Create vendor data
+        vendor_data = {
+            "uid": vendor_id,
+            "name": vendor_name,
+            "role": "vendor",
+            "location": location
+        }
+        
+        # Add to database
+        data = self._load_data()
+        data['users'].append(vendor_data)
+        self._save_data(data)
+        
+        return vendor_id
+    
+    def get_vendor_by_name(self, vendor_name: str) -> Optional[Dict]:
+        """Get vendor by name (case-insensitive)"""
+        vendors = self.get_users_by_role('vendor')
+        return next((vendor for vendor in vendors 
+                    if vendor['name'].lower() == vendor_name.lower()), None)
+    
+    def get_or_create_vendor(self, vendor_name: str, location: str) -> str:
+        """Get existing vendor ID or create new vendor and return ID"""
+        existing_vendor = self.get_vendor_by_name(vendor_name)
+        if existing_vendor:
+            return existing_vendor['uid']
+        else:
+            return self.add_vendor(vendor_name, location)
+    
     # Deals operations
     def get_all_deals(self) -> List[Dict]:
         """Get all deals"""

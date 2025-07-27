@@ -129,8 +129,9 @@
                         <p>Loading deals...</p>
                     </div>
                     
-                <div id="noDealsMessage" class="no-deals" style="display: none;">
-                    <p>No deals found matching your criteria.</p>
+                    <div id="noDealsMessage" class="no-deals" style="display: none;">
+                        <p>No deals found matching your criteria.</p>
+                    </div>
                 </div>
                 
                 <!-- Join Deal Modal (Hidden by default) -->
@@ -148,14 +149,13 @@
                             <form id="joinDealForm">
                                 <input type="hidden" id="modalDealId" name="deal_id">
                                 <div class="form-group">
-                                    <label for="vendorSelect">Select Vendor:</label>
-                                    <select id="vendorSelect" name="vendor_id" required>
-                                        <option value="">Choose Vendor</option>
-                                        <option value="vendor_01">Raju's Chaat Corner (Jayanagar)</option>
-                                        <option value="vendor_02">Sita's Dosa Stall (Jayanagar)</option>
-                                        <option value="vendor_03">Anil's Pav Bhaji (Indiranagar)</option>
-                                        <option value="vendor_04">Priya's Pani Puri (Koramangala)</option>
-                                    </select>
+                                    <label for="vendorName">Vendor Name:</label>
+                                    <input type="text" id="vendorName" name="vendor_name" placeholder="Enter your vendor name" required>
+                                    <small class="form-help">New vendors will be automatically added to the system</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vendorLocation">Vendor Location:</label>
+                                    <input type="text" id="vendorLocation" name="vendor_location" placeholder="e.g., Jayanagar, Bangalore" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="joinQuantity">Quantity:</label>
@@ -170,6 +170,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
     </main>
 

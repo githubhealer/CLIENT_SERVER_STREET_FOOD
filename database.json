@@ -1,0 +1,100 @@
+{
+  "users": [
+    {
+      "uid": "supplier_70303e04",
+      "name": "Supplier_1",
+      "role": "supplier",
+      "location": "jayanagar,bangalore"
+    },
+    {
+      "uid": "supplier_d0504221",
+      "name": "Test Supplier for Vendors",
+      "role": "supplier",
+      "location": "Test Location, Bangalore"
+    },
+    {
+      "uid": "vendor_fc22f4c2",
+      "name": "Raj's Street Food Corner",
+      "role": "vendor",
+      "location": "Koramangala, Bangalore"
+    },
+    {
+      "uid": "vendor_4b84fbdf",
+      "name": "Sita's Dosa Express",
+      "role": "vendor",
+      "location": "Jayanagar, Bangalore"
+    },
+    {
+      "uid": "vendor_d9606554",
+      "name": "vendor1",
+      "role": "vendor",
+      "location": "mangalanagar"
+    }
+  ],
+  "deals": [
+    {
+      "dealId": "deal_onions_226f598b",
+      "supplierId": "supplier_70303e04",
+      "item": "Onions",
+      "unit": "kg",
+      "price": 100.0,
+      "target_quantity": 100,
+      "current_quantity": 0,
+      "status": "active",
+      "location": "jayanagar,bangalore",
+      "expires_at": "2025-08-03T20:44:08.888830Z",
+      "created_at": "2025-07-27T20:44:08.888830Z",
+      "description": "offer going"
+    },
+    {
+      "dealId": "deal_test_vegetables_397117ba",
+      "supplierId": "supplier_d0504221",
+      "item": "Test Vegetables",
+      "unit": "kg",
+      "price": 30.0,
+      "target_quantity": 100,
+      "current_quantity": 19,
+      "status": "active",
+      "location": "Test Location, Bangalore",
+      "expires_at": "2025-08-03T20:46:58.622877Z",
+      "created_at": "2025-07-27T20:46:58.622877Z"
+    }
+  ],
+  "orders": [
+    {
+      "orderId": "order_0031be4b",
+      "dealId": "deal_test_vegetables_397117ba",
+      "vendorId": "vendor_fc22f4c2",
+      "quantity": 5,
+      "created_at": "2025-07-27T20:46:58.689492Z"
+    },
+    {
+      "orderId": "order_b28e4a90",
+      "dealId": "deal_test_vegetables_397117ba",
+      "vendorId": "vendor_fc22f4c2",
+      "quantity": 3,
+      "created_at": "2025-07-27T20:46:58.755827Z"
+    },
+    {
+      "orderId": "order_ace478a9",
+      "dealId": "deal_test_vegetables_397117ba",
+      "vendorId": "vendor_4b84fbdf",
+      "quantity": 8,
+      "created_at": "2025-07-27T20:46:58.830816Z"
+    },
+    {
+      "orderId": "order_37cd8b1d",
+      "dealId": "deal_test_vegetables_397117ba",
+      "vendorId": "vendor_fc22f4c2",
+      "quantity": 2,
+      "created_at": "2025-07-27T20:46:58.887991Z"
+    },
+    {
+      "orderId": "order_25a86d59",
+      "dealId": "deal_test_vegetables_397117ba",
+      "vendorId": "vendor_d9606554",
+      "quantity": 1,
+      "created_at": "2025-07-27T20:50:39.667343Z"
+    }
+  ]
+}

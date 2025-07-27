@@ -170,7 +170,7 @@ def join_deal(deal_id):
         data = request.get_json()
         
         # Validate required fields
-        required_fields = ['vendorId', 'quantity']
+        required_fields = ['vendorName', 'vendorLocation', 'quantity']
         for field in required_fields:
             if field not in data or data[field] is None:
                 return jsonify({
@@ -178,19 +178,8 @@ def join_deal(deal_id):
                     'error': f'Missing required field: {field}'
                 }), 400
         
-        # Validate vendor exists
-        vendor = db.get_user_by_id(data['vendorId'])
-        if not vendor:
-            return jsonify({
-                'success': False,
-                'error': 'Vendor not found'
-            }), 404
-        
-        if vendor.get('role') != 'vendor':
-            return jsonify({
-                'success': False,
-                'error': 'User is not a vendor'
-            }), 403
+        # Get or create vendor
+        vendor_id = db.get_or_create_vendor(data['vendorName'], data['vendorLocation'])
         
         # Validate deal exists and is active
         deal = db.get_deal_by_id(deal_id)
@@ -232,7 +221,7 @@ def join_deal(deal_id):
         new_order = {
             'orderId': order_id,
             'dealId': deal_id,
-            'vendorId': data['vendorId'],
+            'vendorId': vendor_id,
             'quantity': quantity,
             'created_at': datetime.now().isoformat() + "Z"
         }
