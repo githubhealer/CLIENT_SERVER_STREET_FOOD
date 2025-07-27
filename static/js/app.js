@@ -432,7 +432,7 @@ async function handleDealSubmission(event) {
     
     const formData = new FormData(event.target);
     const dealData = {
-        supplierId: formData.get('supplierId'),
+        supplierName: formData.get('supplierName'),
         item: formData.get('item'),
         unit: formData.get('unit'),
         price: parseFloat(formData.get('price')),

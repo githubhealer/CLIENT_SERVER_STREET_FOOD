@@ -26,7 +26,7 @@ def create_deal():
         data = request.get_json()
         
         # Validate required fields
-        required_fields = ['supplierId', 'item', 'unit', 'price', 'target_quantity', 'location']
+        required_fields = ['supplierName', 'item', 'unit', 'price', 'target_quantity', 'location']
         for field in required_fields:
             if field not in data or not data[field]:
                 return jsonify({
@@ -34,19 +34,8 @@ def create_deal():
                     'error': f'Missing required field: {field}'
                 }), 400
         
-        # Validate supplier exists
-        supplier = db.get_user_by_id(data['supplierId'])
-        if not supplier:
-            return jsonify({
-                'success': False,
-                'error': 'Supplier not found'
-            }), 404
-        
-        if supplier.get('role') != 'supplier':
-            return jsonify({
-                'success': False,
-                'error': 'User is not a supplier'
-            }), 403
+        # Get or create supplier
+        supplier_id = db.get_or_create_supplier(data['supplierName'], data['location'])
         
         # Validate numeric fields
         try:
@@ -69,7 +58,7 @@ def create_deal():
         # Create deal object
         new_deal = {
             'dealId': deal_id,
-            'supplierId': data['supplierId'],
+            'supplierId': supplier_id,
             'item': data['item'].strip(),
             'unit': data['unit'].strip(),
             'price': price,

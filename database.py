@@ -57,6 +57,42 @@ class DatabaseManager:
         users = self.get_all_users()
         return [user for user in users if user.get('role') == role]
     
+    def add_supplier(self, supplier_name: str, location: str) -> str:
+        """Add a new supplier and return the supplier ID"""
+        import uuid
+        
+        # Generate unique supplier ID
+        supplier_id = f"supplier_{str(uuid.uuid4())[:8]}"
+        
+        # Create supplier data
+        supplier_data = {
+            "uid": supplier_id,
+            "name": supplier_name,
+            "role": "supplier",
+            "location": location
+        }
+        
+        # Add to database
+        data = self._load_data()
+        data['users'].append(supplier_data)
+        self._save_data(data)
+        
+        return supplier_id
+    
+    def get_supplier_by_name(self, supplier_name: str) -> Optional[Dict]:
+        """Get supplier by name (case-insensitive)"""
+        suppliers = self.get_users_by_role('supplier')
+        return next((supplier for supplier in suppliers 
+                    if supplier['name'].lower() == supplier_name.lower()), None)
+    
+    def get_or_create_supplier(self, supplier_name: str, location: str) -> str:
+        """Get existing supplier ID or create new supplier and return ID"""
+        existing_supplier = self.get_supplier_by_name(supplier_name)
+        if existing_supplier:
+            return existing_supplier['uid']
+        else:
+            return self.add_supplier(supplier_name, location)
+    
     # Deals operations
     def get_all_deals(self) -> List[Dict]:
         """Get all deals"""
