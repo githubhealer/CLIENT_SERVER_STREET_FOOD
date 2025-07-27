@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask_cors import CORS
 from database import db
 import json
 import os
@@ -6,11 +7,17 @@ import uuid
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 @app.route('/')
 def index():
     """Serve the main page"""
     return render_template('index.html')
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    """Serve static files explicitly"""
+    return send_from_directory('static', filename)
 
 @app.route('/api/test-db')
 def test_database():
@@ -288,4 +295,8 @@ def load_database():
         return {"users": [], "deals": [], "orders": []}
 
 if __name__ == '__main__':
+    # For local development
     app.run(debug=True, host='127.0.0.1', port=5001)
+else:
+    # For Vercel deployment
+    app.debug = False
